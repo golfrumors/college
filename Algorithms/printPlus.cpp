@@ -61,6 +61,7 @@ int main(){
     }
 
     input = buff.str(); //update the input string
+    buff.str(string());    
     buff.clear(); //clear the buffer
 
     mid = len/2; //get the middle
