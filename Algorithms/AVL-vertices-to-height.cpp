@@ -12,7 +12,7 @@ int main(){
 
 	cout << "The minimum height of the tree is: " << (int)ceil(log2(input+1)) << endl;
 
-	cout << "The maxmum height of the tree is: " << (int)floor(log2(input+1)) << endl;
+	cout << "Maximum text: " << (int)floor(1.44*log2(input+2)-0.328) << endl;
 
 	return 0;
 }
