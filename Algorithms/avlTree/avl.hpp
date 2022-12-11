@@ -224,7 +224,8 @@ namespace avl{
 
 			static NodePtr RotateRL(K key, V value, const NodePtr &left, const NodePtr &right) {
 				return MakeNode(
-					right->left->kv.first, right->left->kv.second,
+					right->left->kv.first, 
+					right->left->kv.second,
 					MakeNode(std::move(key), std::move(value), left, right->left->left),
 					MakeNode(right->kv.first, right->kv.second, right->left->right,
 					right->right));
@@ -281,6 +282,6 @@ namespace avl{
 
 	}
 
-}
+};
 
 #endif 
