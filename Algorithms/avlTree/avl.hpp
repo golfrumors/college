@@ -75,6 +75,24 @@ namespace avl {
 			ForEachImplementation(root_.get(), std::forward<F>(f));
 		}
 
+		//define func template to print tree
+		template <class F>
+		void Print(F&& f) const {
+			PrintImplementation(root_.get(), std::forward<F>(f));
+		}
+
+		//define func template to print tree in preorder
+		template <class F>
+		void PrintPreorder(F&& f) const {
+			PrintPreorderImplementation(root_.get(), std::forward<F>(f));
+		}
+
+		//define func template to print tree in postorder
+		template <class F>
+		void PrintPostorder(F&& f) const {
+			PrintPostorderImplementation(root_.get(), std::forward<F>(f));
+		}
+
 		bool SameId(const AVL& avl) const { return root_ == avl.root_; }
 
 		/*
@@ -187,6 +205,157 @@ namespace avl {
 			Node* nodes_[32];
 		};
 
+		class Iterator {
+		public:
+			explicit Iterator(const NodePtr& root) {
+				auto* n = root.get();
+				while (n != nullptr) {
+					stack_.Push(n);
+					n = n->left.get();
+				}
+			}
+			Node* current() const { return stack_.Empty() ? nullptr : stack.Back(); }
+
+			void MoveNext() {
+				auto* n = stack_.Pop();
+				if (n->right != nullptr) {
+					n = n->right.get();
+					while (n != nullptr) {
+						stack_.Push(n);
+						n = n->left.get();
+					}
+				}
+			}
+
+		private:
+			IteratorStack stack_;
+		};
+
+		static long Height(const NodePtr& n) { return n ? n->height : 0; }
+
+		static NodePtr MakeNode(Key k, Val v, const NodePtr& left, const NodePtr& right) {
+			return std::make_shared<Node>(std::move(k), std::move(v), left, right,
+				1 + std::max(Height(left), Height(right)));
+		}
+
+		template <typename SimilarToK>
+		static NodePtr Get(const NodePtr& node, const SimilarToK& key) {
+			if (node == nullptr) {
+				return nullptr;
+			}
+
+			if (node->kv.first > key) {
+				return Get(node->left, key);
+			} else if (node->kv.first < key) {
+				return Get(node->right, key);
+			} else {
+				return node;
+			}
+		}
+
+		static NodePtr GetBelow(const NodePtr& node, const Key& k) {
+			if (!node) return nullptr;
+			if(node->kv.first > k) {
+				return GetBelow(node->left, k);
+			} else if (node->kv.first < k) {
+				NodePtr n = GetBelow(node->right, k);
+				if (n == nullptr) n = node;
+				return n;
+			} else {
+				return node;
+			}
+		}
+
+		static NodePtr RotateLeft(Key k, Val v, const NodePtr& left, const NodePtr& right) {
+			return MakeNode(
+				right->kv.first, right->kv.second,
+				MakeNode(std::move(k), std::move(v), left, right->left),
+				right->right);
+		}
+
+		static NodePtr RotateRight(Key k, Val v, const NodePtr& left, const NodePtr& right) {
+			return MakeNode(
+				left->kv.first, left->kv.second, left->left,
+				MakeNode(std::move(k), std::move(v), left->right, right));
+		}
+
+		static NodePtr RotateLR(Key k, Val v, const NodePtr& left, const NodePtr& right) {
+			//rotate right(...,rotate left(left), right)
+			return MakeNode(
+				left->right->kv.first, left->right->kv.second,
+				MakeNode(left->kv.first, left->kv.second, left->left,
+					left->right->left),
+				MakeNode(std::move(k), std::move(v), left->right->right, right));
+		}
+
+		static NodePtr RotateRL (Key k, Val v, const NodePtr& left, const NodePtr& right) {
+			//rotate left(..., left, rotate right(right))
+			return MakeNode(
+				right->left->kv.first, right->left->kv.second,
+				MakeNode(std::move(k), std::move(v), left, right->left->left),
+				MakeNode(right->kv.first, right->kv.second, right->left->right,
+					right->right));
+		}
+
+		static NodePtr Rebalance(Key k, Val v, const NodePtr& left, const NodePtr& right) {
+			switch (Height(left) - Height(right)) {
+			case 2:
+				if (Height(left->left) - Height(left->right) == -1) {
+					return RotateLR(std::move(k), std::move(v), left, right);
+				} else {
+					return RotateRight(std::move(k), std::move(v), left, right);
+				}
+
+			case -2:
+				if(Height(right->left) - Height(right->right) == 1) {
+					return RotateRL(std::move(k), std::move(v), left, right);
+				} else {
+					return RotateLeft(std::move(k), std::move(v), left, right);
+				}
+
+			default:
+				return MakeNode(k, v, left, right);
+			}
+		}
+
+		static NodePtr InOrderH(NodePtr node) {
+			while (node->left != nullptr) {
+				node = node->left;
+			}
+			return node;
+		}
+
+		static NodePtr InOrderT(NodePtr node) {
+			while (node->right != nullptr) {
+				node = node->right;
+			}
+			return node;
+		}
+
+		static NodePtr AddKey(const NodePtr& node, Key k, Val v) {
+		    if (!node) {
+		      return MakeNode(std::move(k), std::move(v), nullptr, nullptr);
+		    }
+		    if (node->kv.first < k) {
+		      return Rebalance(node->kv.first, node->kv.second, node->left,
+		                       AddKey(node->right, std::move(k), std::move(v)));
+		    }
+		    if (k < node->kv.first) {
+		      return Rebalance(node->kv.first, node->kv.second,
+		                       AddKey(node->left, std::move(k), std::move(v)),
+		                       node->right);
+		    }
+		    return MakeNode(std::move(k), std::move(v), node->left, node->right);
+		}
+
+		template <typename SimilarToK>
+		static NodePtr RemoveKey(const NodePtr& node, const SimilarToK& key) {
+			if (node == nullptr){
+				return nullptr;
+			}
+
+			
+		}
 
 	}
 }
