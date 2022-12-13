@@ -1,0 +1,38 @@
+Compare the computational complexity (the Big O) of the following search algorithms. More specifically,
+you should mention potential advantages/disadvantages of one over another. Please convey your
+discussion.
+1. Linear search
+2. Binary search
+3.Jump search
+
+Linear search
+The time complexity of linear search is O(n) where n is the number of elements in the array.
+The linear search is a naive implementation of a search algorithm, and it isn't very effective.
+We start from index 0, and traverse the array until we find the element we are looking for.
+If we find the target element, we return the index of the element. If we don't find the target, we return -1
+The only plausible advantage of linear search is that it is very simple to implement, even a toddler could do it
+It is probably the first intuitive search algorithm that comes to mind, if you aren't a programmer.
+
+Binary search
+The time complexity of the binary search is O(log n) where n is the number of elements in the
+array. Binary search works by comparing the target value to the middle element of the array. 
+If they are not equal, the half in which the target cannot lie is eliminated (by comparing wether the target is greater or smaller than the middle element)
+and the search continues on the remaining half, again taking the middle element to compare to the target value.
+We repeat this until the target value is found. If the last half is empty, we return -1, since the value is not in the array.
+Binary search is the de-facto search alogorithm for sorted arrays. It is very efficient, and it is the most common search algorithm used in practice.
+It only takes 20 iterations to find the target in a 1 million element array.
+The only disadvantage of binary search is that it only works on sorted arrays. 
+If the array is not sorted, we have to sort it first, which adds overhead computational complexity.
+Another disatvantage that can arise from it, is that the space complexity of Binary Search is O(1), HOWEVER, if you implement it recursively
+which is inherintly bad, evil, and you should never do it, you'll end up with a space complexity of O(log n), which is not bad, but not stellar.
+
+Jump search
+The time complexity of the jump search is O(sqrt(n)) where n is the number of elements in the
+array. The jump search is a search algorithm for sorted arrays. The basic idea is to check fewer
+elements (than linear search) by jumping ahead by fixed steps or skipping some elements insteadof searching all elements.
+The jump search is faster than the linear search. 
+The real advantage of jump search comes when O(sqrt(n)) < O(log n), in which case it'll make it faster than binary search.
+O(sqrt(n)) < O(log n) when n > 4, so jump search is faster than binary search for arrays with more than 4 elements, but smaller than 16.
+The disadvantage of jump search is redundant to that of binary search, since it also only works on sorted arrays.
+An advantage that jump search has over binary search, is that it doesn't require recursion (bs doesn't require it either if you're not a noob)
+and jump search also has a space complexity of O(1), which is better than binary search's (recursive) O(log n) space complexity.

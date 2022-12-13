@@ -1,0 +1,22 @@
+The difference between linear and non-linear data structures is that linear data structures are sequential,
+which means that they have an order of traversal, for example, in an array, you can only traverse the array
+from the first element to the last element. 
+On the other hand, non-linear data structures are not sequential, which means that
+they do not have an order of traversal, for example, in a tree,
+you can traverse the tree from any node to any other node.
+Therefore, in a non-linear data structure you have to create your own order of traversal.
+
+Some examples of a linear data structure are:
+Arrays
+Linked lists
+Stacks
+Queues
+
+
+Some examples of a non-linear data structure are:
+Trees
+Graphs
+Hash tables
+Heaps
+Tries
+
